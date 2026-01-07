@@ -2,7 +2,7 @@ pipeline {
   agent any
 
   environment {
-    SONAR_ENV = 'sonarqube'     // must match Manage Jenkins -> System -> SonarQube servers -> Name
+    SONAR_ENV = 'sonarqube'
     SONAR_PROJECT_KEY = 'piptest'
     SONAR_PROJECT_NAME = 'piptest'
   }
@@ -15,9 +15,7 @@ pipeline {
     stage('SonarQube Scan') {
       steps {
         script {
-          // MUST match Manage Jenkins -> Tools -> SonarQube Scanner installations -> Name
           def scannerHome = tool 'SonarScanner'
-
           withSonarQubeEnv("${SONAR_ENV}") {
             sh """
               "${scannerHome}/bin/sonar-scanner" \
