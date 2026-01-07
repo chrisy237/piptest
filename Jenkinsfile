@@ -1,6 +1,10 @@
 pipeline {
   agent any
 
+  tools {
+    sonarScanner 'SonarScanner'
+  }
+
   environment {
     SONAR_ENV = 'sonarqube'
   }
@@ -15,8 +19,8 @@ pipeline {
         withSonarQubeEnv("${SONAR_ENV}") {
           sh """
             sonar-scanner \
-              -Dsonar.projectKey=myproject \
-              -Dsonar.projectName=myproject \
+              -Dsonar.projectKey=piptest \
+              -Dsonar.projectName=piptest \
               -Dsonar.sources=. \
               -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/build/**,**/.git/**
           """
