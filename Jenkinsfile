@@ -1,12 +1,10 @@
 pipeline {
   agent any
 
-  tools {
-    hudson.plugins.sonar.SonarRunnerInstallation 'SonarScanner'
-  }
-
   environment {
     SONAR_ENV = 'sonarqube'
+    SONAR_PROJECT_KEY = 'piptest'
+    SONAR_PROJECT_NAME = 'piptest'
   }
 
   stages {
@@ -16,14 +14,18 @@ pipeline {
 
     stage('SonarQube Scan') {
       steps {
-        withSonarQubeEnv("${SONAR_ENV}") {
-          sh """
-            sonar-scanner \
-              -Dsonar.projectKey=piptest \
-              -Dsonar.projectName=piptest \
-              -Dsonar.sources=. \
-              -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/build/**,**/.git/**
-          """
+        script {
+          // This name MUST match: Manage Jenkins -> Tools -> SonarQube Scanner installations -> Name
+          def scannerHome = tool 'SonarScanner'
+          withSonarQubeEnv("${SONAR_ENV}") {
+            sh """
+              ${scannerHome}/bin/sonar-scanner \
+                -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
+                -Dsonar.projectName=${SONAR_PROJECT_NAME} \
+                -Dsonar.sources=. \
+                -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/build/**,**/.git/**
+            """
+          }
         }
       }
     }
